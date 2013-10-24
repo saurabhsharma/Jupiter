@@ -15,6 +15,7 @@ module.exports.addUser = addUser;
 module.exports.checkLogin = checkLogin;
 // Add user to database
 function addUser(username, password, callback) {
+	console.log("Inside add user function");
 	var instance = new MyUser();
 	instance.username = username;
 	instance.password = password;
@@ -32,17 +33,18 @@ function addUser(username, password, callback) {
 function checkLogin(username1, password1, callback){
 	
 
-	MyUser.find({username:username1,password:password1},function(err,user){
-
+	MyUser.findOne({username:username1,password:password1},function(err,user){
+		
+		console.log("checkLogin " + user);
 		if (err) {
 			callback(err);
 		} else {
 			
-			if (user.length) {
-				callback(null, user[0].username);
+			if (user) {
+				callback(null, user.username);
 			}
 			else {
-				callback(null,0)	
+				callback(null,null)	
 			}
 				
 		}

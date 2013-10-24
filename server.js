@@ -1,5 +1,6 @@
 var net = require("net"),
-	User = require('./models/user.js');
+	User = require('./models/user.js'),
+	Room = require('./models/room.js');
 
 
 var onlineUsers = Object();
@@ -56,10 +57,8 @@ var server = net.createServer(function (stream) {
 				// todo: check if user already in onlineUsers list
 				onlineUsers[userName] = stream;
 				stream.write("{\"replyCode\": \"200\",\"data\": {\"userName\": \""+userName+"\"}}");
-				console.log(onlineUsers);
-
-				console.log(Math.random().toString(36).slice(2)); 
-
+				//console.log(onlineUsers);
+ 
 
 				
 			});
@@ -69,13 +68,18 @@ var server = net.createServer(function (stream) {
 
 		if (incomingStanza.cmd == "startRoom") {
 
-			var usersInRoom = incomingStanza.data.userNames;
+			var participants = incomingStanza.data.participants;
 
-			// todo: check if a room already exist in the database for these users
-			// if there is no existing room in database then create a new room and 
-			// store in rooms array and database
+			 
+			Room.getRoom(participants, function(err,roomName){
 
+				if (err){
+					throw err;
+				}
 
+				console.log("Room Name = " + roomName);
+
+			});
 
 
 		}
