@@ -78,7 +78,7 @@ var server = net.createServer(function (stream) {
 				}
 
 				console.log("Room Name = " + roomName);
-
+				stream.write("{\"replyCode\": \"200\",\"data\": {\"roomName\": \""+roomName+"\"}}");
 			});
 
 
