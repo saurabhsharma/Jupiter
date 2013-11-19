@@ -5,16 +5,20 @@ var UserSchema = new db.Schema({
 		type: String,
 		unique: true
 	},
-	password: String
+	password: String,
+	tokens: [String]
+
 })
 
 var MyUser = db.mongoose.model('User', UserSchema);
 
 // Exports
-module.exports.addUser = addUser;
-module.exports.checkLogin = checkLogin;
+module.exports.addUser 		= addUser;
+module.exports.checkLogin 	= checkLogin;
+module.exports.addUserToken	= addUserToken;
 // Add user to database
 function addUser(username, password, callback) {
+
 	console.log("Inside add user function");
 	var instance = new MyUser();
 	instance.username = username;
@@ -29,6 +33,37 @@ function addUser(username, password, callback) {
 	});
 
 }
+
+function addUserToken(username1,token1, callback) {
+
+	// check if a room already exists with these participants ..
+	MyUser.findOne({tokens:token1},function (err, user) { 
+
+		if (err){
+			callback(err);
+		}
+		if (user){
+			callback(null,user);
+		}
+		else{
+			 
+			MyUser.findOneAndUpdate({username: username1},{$push: { "tokens": token1}}, function(err,user){
+				if (err){
+					callback(err, null);
+				}
+				else{
+					callback(null,user);
+				}
+					
+			})
+
+		}
+
+	});
+	
+}
+
+
 
 function checkLogin(username1, password1, callback){
 	
