@@ -5,7 +5,7 @@ var net 		= require("net"),
 	crypto 		= require('crypto');
 
 var onlineUserTokens = Object();
-
+var onlineUserName = Object();
 var rooms = Object();
  
 
@@ -73,6 +73,7 @@ var server = net.createServer(function (stream) {
 
 						// todo: check if user already in onlineUsers list
 						onlineUserTokens[token] = stream;
+						onlineUserName[token] = userName;
 						stream.write("{\"replyCode\": \"200\",\"data\": {\"token\": \""+token+"\"}}");
 
 					}
@@ -115,6 +116,38 @@ var server = net.createServer(function (stream) {
 
 
 
+		if (incomingStanza.cmd == "getAllRooms") {
+
+			var token = incomingStanza.token;
+
+
+			validateSession(token, stream,function () {
+
+					var loggedInUserName = onlineUserName[token];
+
+					Room.getAllRoomsForUser(loggedInUserName,function(err,rooms){
+
+						if (err){
+							throw err;
+						} else {
+							stream.write("{\"replyCode\": \"200\",\"data\": {\"rooms\": "+JSON.stringify(rooms)+"}}");
+						}
+
+
+					});
+					
+				
+				});
+
+
+		}
+ 
+
+
+
+
+
+
 
 
 	});
@@ -151,3 +184,5 @@ function validateSession(token,stream,callback){
 
 
 }
+
+ 

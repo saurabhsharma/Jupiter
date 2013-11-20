@@ -12,8 +12,26 @@ var Room = db.mongoose.model('Room', RoomSchema);
 
 // Exports
 module.exports.getRoom = getRoom;
+module.exports.getAllRoomsForUser = getAllRoomsForUser;
+function getAllRoomsForUser(userName, callback){
+
+	Room.find({"participants":userName},function(err,rooms){
+
+		if (err){
+			callback(err,null);
+		} else {
+
+			console.log("all rooms for user - "+rooms);
+			callback(null, rooms);
+		}
 
 
+
+
+	});
+
+
+}
  
 function getRoom(participants,callback){
 	
